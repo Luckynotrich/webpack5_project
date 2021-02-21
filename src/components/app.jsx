@@ -1,6 +1,5 @@
 import "../style/index.scss";
-
-import React from "react";
+import Recipes from "./recipes";
 
 const App = () => {
     return(
@@ -11,6 +10,7 @@ const App = () => {
                 <h1>Whats Shaken, React</h1>
             </section>
         </main>
+        <Recipes />
         </>
     )
 
