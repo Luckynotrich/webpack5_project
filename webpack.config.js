@@ -1,5 +1,9 @@
+const path = require("path");
 const { node, web } = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+
 var target = "web";
 let mode = "development";
 if (process.env.NODE_ENV === "production") {
@@ -10,12 +14,31 @@ if (process.env.NODE_ENV === "production") {
 module.exports = {
 	mode: mode,
 	target: target,
+
+	output: {
+		// output path is required for `clean-webpack-plugin`
+		path: path.resolve(__dirname, "dist"),
+		assetModuleFilename: "images/[hash][ext][query]",
+	},
+
 	module: {
 		rules: [
 			{
+				test: /\.(png|jpe?g|gif|svg)$/i,
+				type: "asset",
+				// parser: {
+				// 	dataUrlCondition: {
+				// 		maxSize: 30 * 1024,
+				// 	},
+				// },
+			},
+			{
 				test: /\.(s[ac]|c)ss$/i,
 				use: [
-					MiniCssExtractPlugin.loader,
+					{
+						loader: MiniCssExtractPlugin.loader,
+						options: { publicPath: "" },
+					},
 					"css-loader",
 					"postcss-loader",
 					"sass-loader",
@@ -30,7 +53,13 @@ module.exports = {
 			},
 		],
 	},
-	plugins: [new MiniCssExtractPlugin()],
+	plugins: [
+		new CleanWebpackPlugin(),
+		new MiniCssExtractPlugin(),
+		new HtmlWebpackPlugin({
+			template: "./src/index.html",
+		}),
+	],
 
 	resolve: {
 		extensions: [".js", ".jsx"],
